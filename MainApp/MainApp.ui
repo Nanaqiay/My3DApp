@@ -1,0 +1,25 @@
+<UI version="4.0" >
+ <class>MainAppClass</class>
+ <widget class="QWidget" name="MainAppClass" >
+  <property name="objectName" >
+   <string notr="true">MainAppClass</string>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainApp</string>
+  </property>$centralwidget$
+ </widget>
+ <layoutDefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <resources>
+   <include location="MainApp.qrc"/>
+ </resources>
+ <connections/>
+</UI>
