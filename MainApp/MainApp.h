@@ -1,17 +1,15 @@
 #pragma once
 
-#include "Graphics/GL45/WGL/WGLEngine.h"
-#include "Graphics/GL45/GLSLProgramFactory.h"
-#include <Applications/GTApplicationsPCH.h>
-#include <Applications/Environment.h>
 #include <cstdlib>
-#include <fstream>
 #include <Graphics/GraphicsEngine.h>
-#include <Applications/Application.h>
+#include <Graphics/GL45/WGL/WGLEngine.h>
+#include <Graphics/GL45/GLSLProgramFactory.h>
+#include <Graphics/PVWUpdater.h>
+
 #include <Applications/OnIdleTimer.h>
 #include <Applications/CameraRig.h>
 #include <Applications/TrackBall.h>
-#include <Graphics/PVWUpdater.h>
+#include <Applications/Environment.h>
 
 #include <QtWidgets/QWidget>
 #include "ui_MainApp.h"
@@ -33,15 +31,7 @@ public:
 
     void CreateEngineAndProgramFactory();
 
-public:
-    // Get the value of the GTE_PATH environment variable. Derived
-    // classes may use this variable to ensure the existence of input
-    // data sets that are required by an application. If the function
-    // returns "", the GTE_PATH variable has not been set.
-    inline std::string GetGTEPath() const
-    {
-        return mEnvironment.GetGTEPath();
-    }
+    inline std::string GetGTEPath() const { return mEnvironment.GetGTEPath(); }
 
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
@@ -50,9 +40,9 @@ protected:
 private:
     Ui::MainAppClass ui;
 
+    // Standard window information.
+    HWND mHandle;
 
-
-protected:
     // Support for access to environment variables and paths.
     Environment mEnvironment;
 
@@ -61,11 +51,6 @@ protected:
     // corresponding graphics API subsystems.
     std::shared_ptr<BaseEngine> mBaseEngine;
     std::shared_ptr<ProgramFactory> mProgramFactory;
-
-private:
-
-    // Standard window information.
-    HWND mHandle;
 
     // TODO: This is assigned mBaseEngine, which allows development of
     // the DX12 engine independently of DX11 and WGL. The DX12 engine

@@ -2,6 +2,8 @@
 
 #include "MainApp.h"
 
+#include <Graphics/MeshFactory.h>
+
 
 MainApp::MainApp(QWidget *parent)
     : QWidget(parent)
