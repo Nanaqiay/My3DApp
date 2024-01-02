@@ -4,6 +4,7 @@
 
 #include <Graphics/MeshFactory.h>
 
+#include <QMouseEvent>
 
 MainApp::MainApp(QWidget *parent)
     : QWidget(parent)
@@ -13,7 +14,14 @@ MainApp::MainApp(QWidget *parent)
     ui.setupUi(this);
     setGeometry(0, 0, 512, 512);
     setAttribute(Qt::WA_PaintOnScreen, true);
+    //setAttribute(Qt::WA_NoSystemBackground, true);
+    //setAttribute(Qt::WA_AcceptTouchEvents, true);
+    //setAttribute(Qt::WA_OpaquePaintEvent, true);
+    //setAttribute(Qt::WA_NativeWindow, true);
     //setWindowState(Qt::WindowFullScreen);
+
+    //setMouseTracking(true);
+    //setAutoFillBackground(true);
 
     mHandle = (HWND)winId();
     CreateEngineAndProgramFactory();
@@ -58,8 +66,10 @@ void MainApp::CreateEngineAndProgramFactory()
     mCamera = std::make_shared<Camera>(true, mEngine->HasDepthRange01());
     mCameraRig = CameraRig(mCamera, 0.0f, 0.0f);
     mPVWMatrices = PVWUpdater(mCamera, mUpdater);
-    mTrackBall = TrackBall(500, 500, mCamera);
+    mTrackBall = TrackBall(width(), height(), mCamera);
 }
+
+int timer = 0;
 
 void MainApp::paintEvent(QPaintEvent* event)
 {
@@ -80,7 +90,7 @@ void MainApp::paintEvent(QPaintEvent* event)
         mTimer.UpdateFrameCount();
     }
 
-    //mTimer.Measure();
+    mTimer.Measure();
 
     if (mCameraRig.Move())
     {
@@ -89,10 +99,80 @@ void MainApp::paintEvent(QPaintEvent* event)
 
     mEngine->ClearBuffers();
     mEngine->Draw(mMesh);
-    //mEngine->Draw(8, width() - 8, { 0.0f, 0.0f, 0.0f, 1.0 }, mTimer.GetFPS());
+    mEngine->Draw(8, width() - 8, { 0.0f, 0.0f, 0.0f, 1.0 }, QString::number(timer).toStdString());
     mEngine->DisplayColorBuffer(0);
 
-    //mTimer.UpdateFrameCount();
+    int a = 0;
+    if (a)
+    {
+        mTrackBall.SetActive(true);
+        mTrackBall.SetInitialPoint(256, height() - 1 - 256);
+
+        mTrackBall.SetFinalPoint(512, height() - 1 - 256);
+        mPVWMatrices.Update();
+
+        mTrackBall.SetActive(false);
+    }
+
+    mTimer.UpdateFrameCount();
+    timer++;
+}
+
+void MainApp::mousePressEvent(QMouseEvent* event)
+{
+    if (event->buttons() == Qt::LeftButton)
+    {
+        POINT pos;
+        pos.x = event->pos().x() * devicePixelRatio();
+        pos.y = event->pos().y() * devicePixelRatio();
+
+        mTrackBall.SetActive(true);
+        mTrackBall.SetInitialPoint(pos.x, height() - 1 - pos.y);
+    }
+
+    return QWidget::mousePressEvent(event);
+}
+
+void MainApp::mouseReleaseEvent(QMouseEvent* event)
+{
+
+    mTrackBall.SetActive(false);
+    if (event->button() == Qt::LeftButton)
+    {
+        //POINT pos;
+        //pos.x = event->pos().x() * devicePixelRatio();
+        //pos.y = event->pos().y() * devicePixelRatio();
+
+        //mTrackBall.SetFinalPoint(pos.x, height() - 1 - pos.y);
+        //mPVWMatrices.Update();
+       
+    }
+
+    return QWidget::mouseReleaseEvent(event);
+}
+
+void MainApp::mouseMoveEvent(QMouseEvent* event)
+{
+    Qt::MouseButton button = event->button();
+    if (mTrackBall.GetActive())
+    {
+        POINT pos;
+        pos.x = event->pos().x() * devicePixelRatio();
+        pos.y = event->pos().y() * devicePixelRatio();
+
+        mTrackBall.SetFinalPoint(pos.x, height() - 1 - pos.y);
+        mPVWMatrices.Update();
+        //mTrackBall.SetActive(false);
+    }
+
+    update();
+
+    return QWidget::mouseMoveEvent(event);
+}
+
+void MainApp::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    return QWidget::mouseDoubleClickEvent(event);
 }
 
 void MainApp::InitializeCamera(float upFovDegrees, float aspectRatio, float dmin, float dmax,
