@@ -35,7 +35,8 @@ public:
 
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
-
+    bool SetEnvironment();
+    bool CreateScene();
 
 private:
     Ui::MainAppClass ui;
@@ -64,4 +65,6 @@ private:
     TrackBall mTrackBall;
 
     OnIdleTimer mTimer;
+
+    std::shared_ptr<Visual> mMesh;
 };
