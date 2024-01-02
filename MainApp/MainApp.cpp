@@ -12,6 +12,8 @@ MainApp::MainApp(QWidget *parent)
 
     ui.setupUi(this);
     setGeometry(0, 0, 512, 512);
+    setAttribute(Qt::WA_PaintOnScreen, true);
+    //setWindowState(Qt::WindowFullScreen);
 
     mHandle = (HWND)winId();
     CreateEngineAndProgramFactory();

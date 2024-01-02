@@ -35,6 +35,8 @@ public:
 
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
+    QPaintEngine* paintEngine()const { return 0; }
+
     bool SetEnvironment();
     bool CreateScene();
 
